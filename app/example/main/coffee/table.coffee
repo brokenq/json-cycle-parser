@@ -38,7 +38,7 @@ angular.module 'table', [
     $scope.selection = {checked: false, items: {}}
     $scope.getPhoneById  = (id)->
       return phone for phone in $scope.phones when phone.id is parseInt id
-    $scope.actionService = new ActionService({watch: $scope.selection, mapping: $scope.getPhoneById})
+    $scope.actionService = new ActionService({watch: $scope.selection.items, mapping: $scope.getPhoneById})
 
     $scope.$watch 'selection.checked', (value)->
       angular.forEach $scope.phones, (item)->

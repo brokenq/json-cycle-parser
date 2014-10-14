@@ -116,7 +116,7 @@ angular.module('dnt.action.service', [
           @return: selections###
       getSelections: ->
         selections = {datas: [], trs: []}
-        for key, val of @options.watch.items when val
+        for key, val of @options.watch when val
           selections.datas.push @options.mapping(key)
           selections.trs.push $("[#{@CODE.TR_VALUE}=#{key}]")
         return selections
