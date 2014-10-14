@@ -1,0 +1,25 @@
+mixin select_all()
+  input(type="checkbox", ng-model="selection.checked", name="filter-checkbox", value="")#select_all
+mixin toolBtn(label, weight, requireCss, rejectCss, action)
+  button(type="button", weight="#{weight}", require-css="#{requireCss}", reject-css="#{rejectCss}", ng-click="#{action}") #{label}
+
+.container(ng-controller='tableCtrl', ui-view)
+  .toolbar
+    +toolBtn("Refresh", "*", "", "", "actionService.perform(refresh, $event)")
+    +toolBtn("Edit", "1", "editable", "", "actionService.gotoState('table.detail', $event)")
+    +toolBtn("Edit without Locked", "1", "editable", "locked", "actionService.gotoState('table.detail', $event)")
+    +toolBtn("Approve", "1+", "approving", "approved", "actionService.perform(approve, $event)")
+    +toolBtn("Compare", "2", "comparable", "", "actionService.perform(compare, $event)")
+    table.table.table-hover.table-bordered(ng-table="tableParams")#table
+      //tr(ng-repeat="phone in $data", ng-class='style', value='{{phone.id}}')
+      tr(ng-repeat="phone in $data", ng-class='status', ng-init='status = {editable: editable, locked: locked, approving: approving, approved: approved, comparable: comparable}', value='{{phone.id}}')
+        td(style='text-align: left', with='30', header="'ngTableCheckboxHeader'")
+          //input(type='text', ng-hide='true', ng-model='style', ng-init='style=phone.status')
+          input(type='text', ng-hide='true', ng-model='status', ng-init='status = phone.status')
+          input(type='checkbox', ng-model="selection.items[phone.id]")
+        td(data-title="'Type'")  {{phone.type}}
+        td(data-title="'Name'") {{phone.name}}
+        td(data-title="'Status'")  {{phone.status}}
+
+  script(type="text/ng-template")#ngTableCheckboxHeader
+    +select_all()
