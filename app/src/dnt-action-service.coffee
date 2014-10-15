@@ -105,7 +105,7 @@ angular.module('dnt.action.service', [
           @param: event | event-css
           @return: conditions###
       getConditions: (event)->
-        element = $(event.srcElement)
+        element = $(event.srcElement || event.target)
         conditions =
           weight: element.attr(@CSS.WEIGHT)
           rejectCss: element.attr(@CSS.REJECT_CSS)

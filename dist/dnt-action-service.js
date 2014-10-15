@@ -185,7 +185,7 @@
 
         ActionService.prototype.getConditions = function(event) {
           var conditions, element;
-          element = $(event.srcElement);
+          element = $(event.srcElement || event.target);
           conditions = {
             weight: element.attr(this.CSS.WEIGHT),
             rejectCss: element.attr(this.CSS.REJECT_CSS),
