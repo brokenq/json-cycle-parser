@@ -126,7 +126,7 @@ angular.module('dnt.action.service', [
           @return: json datas of css###
       getCss: (classes)->
         cssJson = {}
-        if classes? then cssJson[css] = css for css in classes.split(/\s+/)
+        if classes? and classes isnt '' then cssJson[css] = css for css in classes.split(/\s+/)
         return cssJson
 
       ### @function: getClass | get css of which selected elements of tr

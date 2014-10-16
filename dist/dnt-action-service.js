@@ -226,7 +226,7 @@
         ActionService.prototype.getCss = function(classes) {
           var css, cssJson, _i, _len, _ref;
           cssJson = {};
-          if (classes != null) {
+          if ((classes != null) && classes !== '') {
             _ref = classes.split(/\s+/);
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               css = _ref[_i];

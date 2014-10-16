@@ -67,10 +67,7 @@ angular.module 'table', [
       alert "refresh"
     $scope.testWeight = (phones)->
       alert "testWeight: #{$filter('json')(phones)}"
+    $scope.testEmptyCss = (phones)->
+      alert "testEmptyCss: #{$filter('json')(phones)}"
 
-#    String.prototype.supplant =  (o) ->
-#      this.replace /{([^{}]*)}/g, (a, b)->
-#        r = o[b]
-#        if typeof r is 'string' or typeof r is 'number' then r else a
-#    alert("I'm {0} years old!".supplant(29 ))
   ]
