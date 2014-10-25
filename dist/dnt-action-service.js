@@ -4,7 +4,8 @@
       var ActionService;
       return ActionService = (function() {
         ActionService.prototype.CODE = {
-          TR_VALUE: "value"
+          TR_VALUE: "value",
+          TOOLBAR_CSS: ".toolbar"
         };
 
         ActionService.prototype.CSS = {
@@ -19,102 +20,110 @@
           CHECK_STATUS: "you can't perform this action, please check the status of records which were selected"
         };
 
+
+        /* @function constructor | construct function
+            @param: options | {watch: {}, mapping: function}
+         */
+
         function ActionService(options) {
+          var fn, instance;
           this.options = options;
+          instance = this;
+          instance.options.buttons = [];
+          fn = function() {
+            return instance.options.watch;
+          };
+          $rootScope.$watchCollection(fn, function() {
+            if (instance.options.buttons.length === 0) {
+              instance.options.buttons = $(instance.CODE.TOOLBAR_CSS).find("button[" + instance.CSS.WEIGHT + "]");
+            }
+            return instance.toggleButtons();
+          });
         }
 
 
-        /* @function: passedSelections | deal with the conditions before perform the action
-            @param: event | event
-            @return: the selected datas
-         */
+        /* @function: toggleButtons | toggle the disabled attribute of buttons */
 
-        ActionService.prototype.passedSelections = function(event) {
-          var conditions, selections;
-          conditions = this.getConditions(event);
+        ActionService.prototype.toggleButtons = function() {
+          var button, conditions, selections, _i, _len, _ref, _results;
           selections = this.getSelections();
-          this.checkConditionPass(conditions, selections);
-          return selections.datas;
+          _ref = this.options.buttons;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            button = _ref[_i];
+            conditions = this.getConditions(button);
+            _results.push(this.checkCondition(button, conditions, selections));
+          }
+          return _results;
         };
 
 
         /* @function: gotoState | redirect to another page
             @param: state | state of the page you want to redirect
-            @param: event | event
          */
 
-        ActionService.prototype.gotoState = function(state, event) {
-          var error, passed;
-          try {
-            passed = this.passedSelections(event);
-            return $state.go(state, passed[0]);
-          } catch (_error) {
-            error = _error;
-            return alert(error);
-          }
+        ActionService.prototype.gotoState = function(state) {
+          var selections;
+          selections = this.getSelections();
+          return $state.go(state, selections.datas[0]);
         };
 
 
         /* @function: perform | perform the callback function
             @param: callback | the function you want to perform
-            @param: event | event
          */
 
-        ActionService.prototype.perform = function(callback, event) {
-          var error, item, passed, _i, _len, _results;
-          try {
-            passed = this.passedSelections(event);
-            if (callback.length === 1) {
-              _results = [];
-              for (_i = 0, _len = passed.length; _i < _len; _i++) {
-                item = passed[_i];
-                _results.push(callback(item));
-              }
-              return _results;
-            } else {
-              return callback.apply(this, passed);
+        ActionService.prototype.perform = function(callback) {
+          var item, selections, _i, _len, _ref, _results;
+          selections = this.getSelections();
+          if (callback.length === 1) {
+            _ref = selections.datas;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              item = _ref[_i];
+              _results.push(callback(item));
             }
-          } catch (_error) {
-            error = _error;
-            return alert(error);
+            return _results;
+          } else {
+            return callback.apply(this, selections.datas);
           }
         };
 
 
-        /* @function: isConditionPass | you can perform the action if the conditon is passed
+        /* @function: checkCondition | you can perform the action if the conditon is passed
+            @param: element | button of toolbar
             @param: conditions | button attributes: weight, reject-css, require-css
             @param: selections | contains the selected datas and elements of tr
          */
 
-        ActionService.prototype.checkConditionPass = function(conditions, selections) {
-          var min, weight;
+        ActionService.prototype.checkCondition = function(element, conditions, selections) {
           if (/^\d+$/.test(conditions.weight)) {
-            weight = parseInt(conditions.weight);
-            if (weight === selections.datas.length) {
-              this.checkStatus(conditions, selections);
-              return;
+            if (parseInt(conditions.weight) === selections.datas.length) {
+              return this.checkStatus(element, conditions, selections);
             }
-            throw this.stringFormat(this.INFO.REJECT, weight);
+            return $(element).attr("disabled", "disabled");
           }
           if (/^\d+\+$/.test(conditions.weight)) {
-            min = parseInt(conditions.weight.split(/\+/)[0]);
-            if (selections.datas.length >= min) {
-              this.checkStatus(conditions, selections);
-              return;
+            if (selections.datas.length >= parseInt(conditions.weight.split(/\+/)[0])) {
+              return this.checkStatus(element, conditions, selections);
             }
-            throw this.stringFormat(this.INFO.REJECT_AT_LEAST, min);
+            return $(element).attr("disabled", "disabled");
           }
+          return $(element).removeAttr("disabled");
         };
 
 
         /* @function: checkStatus | used in isConditionPass function
+            @param: element | button of toolbar
             @param: conditions | button attributes: weight, reject-css, require-css
             @param: selections | contains the selected datas and elements of tr
          */
 
-        ActionService.prototype.checkStatus = function(conditions, selections) {
-          if (!this.isCssPass(conditions, selections)) {
-            throw this.INFO.CHECK_STATUS;
+        ActionService.prototype.checkStatus = function(element, conditions, selections) {
+          if (this.isCssPass(conditions, selections)) {
+            return $(element).removeAttr("disabled");
+          } else {
+            return $(element).attr("disabled", "disabled");
           }
         };
 
@@ -178,18 +187,17 @@
         };
 
 
-        /* @function: getConditions | get button attributes: weight, reject-css, require-css
-            @param: event | event-css
+        /* @function: getConditions | get attributes of button: weight, reject-css, require-css
+            @param: element | button of toolbar
             @return: conditions
          */
 
-        ActionService.prototype.getConditions = function(event) {
-          var conditions, element;
-          element = $(event.srcElement || event.target);
+        ActionService.prototype.getConditions = function(element) {
+          var conditions;
           conditions = {
-            weight: element.attr(this.CSS.WEIGHT),
-            rejectCss: element.attr(this.CSS.REJECT_CSS),
-            requireCss: element.attr(this.CSS.REQUIRE_CSS)
+            weight: $(element).attr(this.CSS.WEIGHT),
+            rejectCss: $(element).attr(this.CSS.REJECT_CSS),
+            requireCss: $(element).attr(this.CSS.REQUIRE_CSS)
           };
           return conditions;
         };

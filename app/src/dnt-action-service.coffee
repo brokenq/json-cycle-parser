@@ -5,6 +5,7 @@ angular.module('dnt.action.service', [
     class ActionService
       CODE:
         TR_VALUE: "value"
+        TOOLBAR_CSS: ".toolbar"
       CSS:
         WEIGHT: "weight"
         REJECT_CSS: "reject-css"
@@ -14,62 +15,60 @@ angular.module('dnt.action.service', [
         REJECT_AT_LEAST: "you must select {0} records to perform this action at least"
         CHECK_STATUS: "you can't perform this action, please check the status of records which were selected"
 
+      ### @function constructor | construct function
+          @param: options | {watch: {}, mapping: function}###
       constructor: (@options)->
+        instance = this
+        instance.options.buttons = []
+        fn = ->
+          return instance.options.watch
+        $rootScope.$watchCollection fn, ->
+          instance.options.buttons = $(instance.CODE.TOOLBAR_CSS).find("button[#{instance.CSS.WEIGHT}]") if instance.options.buttons.length is 0
+          instance.toggleButtons()
 
-      ### @function: passedSelections | deal with the conditions before perform the action
-          @param: event | event
-          @return: the selected datas###
-      passedSelections: (event)->
-        conditions = @getConditions event
+      ### @function: toggleButtons | toggle the disabled attribute of buttons###
+      toggleButtons: ()->
         selections = @getSelections()
-        @checkConditionPass conditions, selections
-        return selections.datas
+        for button in @options.buttons
+          conditions = @getConditions button
+          @checkCondition button, conditions, selections
 
       ### @function: gotoState | redirect to another page
-          @param: state | state of the page you want to redirect
-          @param: event | event ###
-      gotoState: (state, event)->
-        try
-          passed = @passedSelections event
-          $state.go state, passed[0]
-        catch error
-          alert error
+          @param: state | state of the page you want to redirect###
+      gotoState: (state)->
+        selections = @getSelections()
+        $state.go state, selections.datas[0]
 
       ### @function: perform | perform the callback function
-          @param: callback | the function you want to perform
-          @param: event | event ###
-      perform: (callback, event)->
-        try
-          passed = @passedSelections event
-          if callback.length is 1
-            callback item for item in passed
-          else
-            callback.apply this, passed
-        catch error
-          alert error
+          @param: callback | the function you want to perform###
+      perform: (callback)->
+        selections = @getSelections()
+        if callback.length is 1
+          callback item for item in selections.datas
+        else
+          callback.apply this, selections.datas
 
-      ### @function: isConditionPass | you can perform the action if the conditon is passed
+      ### @function: checkCondition | you can perform the action if the conditon is passed
+          @param: element | button of toolbar
           @param: conditions | button attributes: weight, reject-css, require-css
           @param: selections | contains the selected datas and elements of tr ###
-      checkConditionPass: (conditions, selections)->
+      checkCondition: (element, conditions, selections)->
         if /^\d+$/.test conditions.weight
-          weight = parseInt conditions.weight
-          if weight is selections.datas.length
-            @checkStatus(conditions, selections)
-            return
-          throw @stringFormat @INFO.REJECT, weight
+          if parseInt(conditions.weight) is selections.datas.length
+            return @checkStatus(element, conditions, selections)
+          return $(element).attr("disabled", "disabled")
         if /^\d+\+$/.test conditions.weight
-          min = parseInt conditions.weight.split(/\+/)[0]
-          if selections.datas.length >= min
-            @checkStatus(conditions, selections)
-            return
-          throw @stringFormat @INFO.REJECT_AT_LEAST, min
+          if selections.datas.length >= parseInt(conditions.weight.split(/\+/)[0])
+            return @checkStatus(element, conditions, selections)
+          return $(element).attr("disabled", "disabled")
+        $(element).removeAttr("disabled")
 
       ### @function: checkStatus | used in isConditionPass function
+          @param: element | button of toolbar
           @param: conditions | button attributes: weight, reject-css, require-css
           @param: selections | contains the selected datas and elements of tr ###
-      checkStatus: (conditions, selections)->
-        throw @INFO.CHECK_STATUS unless @isCssPass conditions, selections
+      checkStatus: (element, conditions, selections)->
+        if @isCssPass conditions, selections then $(element).removeAttr "disabled" else $(element).attr "disabled", "disabled"
 
       ### @function: isCssPass | were css passed
           @param: conditions | button attributes: weight, reject-css, require-css
@@ -101,15 +100,14 @@ angular.module('dnt.action.service', [
           return false for requireCss of requireCssJson when !trCssJson[requireCss]?
         return true
 
-      ### @function: getConditions | get button attributes: weight, reject-css, require-css
-          @param: event | event-css
+      ### @function: getConditions | get attributes of button: weight, reject-css, require-css
+          @param: element | button of toolbar
           @return: conditions###
-      getConditions: (event)->
-        element = $(event.srcElement || event.target)
+      getConditions: (element)->
         conditions =
-          weight: element.attr(@CSS.WEIGHT)
-          rejectCss: element.attr(@CSS.REJECT_CSS)
-          requireCss: element.attr(@CSS.REQUIRE_CSS)
+          weight: $(element).attr(@CSS.WEIGHT)
+          rejectCss: $(element).attr(@CSS.REJECT_CSS)
+          requireCss: $(element).attr(@CSS.REQUIRE_CSS)
         return conditions
 
       ### @function: getSelections | get selected datas and elements of tr
