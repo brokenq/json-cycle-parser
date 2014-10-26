@@ -5,7 +5,7 @@ angular.module('dnt.action.service', [
     class ActionService
       CODE:
         TR_VALUE: "value"
-        TOOLBAR_CSS: ".toolbar"
+        TOOLBAR_CSS: ".btn-toolbar"
       CSS:
         WEIGHT: "weight"
         REJECT_CSS: "reject-css"

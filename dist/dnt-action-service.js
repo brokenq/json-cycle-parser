@@ -5,7 +5,7 @@
       return ActionService = (function() {
         ActionService.prototype.CODE = {
           TR_VALUE: "value",
-          TOOLBAR_CSS: ".toolbar"
+          TOOLBAR_CSS: ".btn-toolbar"
         };
 
         ActionService.prototype.CSS = {
