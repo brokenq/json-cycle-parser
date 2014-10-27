@@ -23,7 +23,7 @@ angular.module('dnt.action.service', [
         fn = ->
           return instance.options.watch
         $rootScope.$watchCollection fn, ->
-          instance.options.buttons = $(instance.CODE.TOOLBAR_CSS).find("button[#{instance.CSS.WEIGHT}]") if instance.options.buttons.length is 0
+          instance.options.buttons = $(instance.CODE.TOOLBAR_CSS).find("button[#{instance.CSS.WEIGHT}], a[#{instance.CSS.WEIGHT}]") if instance.options.buttons.length is 0
           instance.toggleButtons()
 
       ### @function: toggleButtons | toggle the disabled attribute of buttons###

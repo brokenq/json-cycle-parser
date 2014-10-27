@@ -35,7 +35,7 @@
           };
           $rootScope.$watchCollection(fn, function() {
             if (instance.options.buttons.length === 0) {
-              instance.options.buttons = $(instance.CODE.TOOLBAR_CSS).find("button[" + instance.CSS.WEIGHT + "]");
+              instance.options.buttons = $(instance.CODE.TOOLBAR_CSS).find("button[" + instance.CSS.WEIGHT + "], a[" + instance.CSS.WEIGHT + "]");
             }
             return instance.toggleButtons();
           });

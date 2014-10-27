@@ -69,5 +69,7 @@ angular.module 'table', [
       alert "testWeight: #{$filter('json')(phones)}"
     $scope.testEmptyCss = (phones)->
       alert "testEmptyCss: #{$filter('json')(phones)}"
+    $scope.testA = (phones)->
+      alert "testA: #{$filter('json')(phones)}"
 
   ]
