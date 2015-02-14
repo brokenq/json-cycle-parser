@@ -1,11 +1,11 @@
 angular.module('services', ['ngResource'])
 
-  .factory('PhoneService', ['$resource', ($resource) ->
-    return $resource 'json/:phoneId.json', {}, {
+  .factory('CatService', ['$resource', ($resource) ->
+    return $resource 'json/:type.json', {}, {
       query: {
         method: 'GET'
-        params: {phoneId: 'phones'}
-        isArray: true
+        params: {type: 'cat'}
+        isArray: false
       }
     }
   ])

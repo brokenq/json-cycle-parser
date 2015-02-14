@@ -1,12 +1,15 @@
 angular.module('main', [
-  'table'
+  'services'
+  'JsonCycleParser'
 ])
-#  .config ($stateProvider)->
-#    $stateProvider.state 'table',
-#      url: '/table'
-#      templateUrl: 'app/example/main/jade/main.jade'
 
-  .controller('mainCtrl', [ ->
+  .controller('mainCtrl', ["$scope", "CatService", "JsonCycleParser", \
+                           ($scope,   catService,   JsonCycleParser)->
+    catService.query (data)->
+      jsonCycleParser = new JsonCycleParser( data )
+      $scope.cat = jsonCycleParser.json
+      console.log $scope.cat
+      console.log $scope.cat.children[0].children[0].grandFather
 
   ])
 

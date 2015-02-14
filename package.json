@@ -1,20 +1,21 @@
 {
-  "name": "dnt-action-service",
-  "version": "0.0.2",
-  "description": "Action Service",
+  "name": "json-cycle-parser",
+  "version": "1.0.0",
+  "description": "Json Cycle Parser",
   "scripts": {
     "start": "brunch watch --server",
     "test": "karma start test/karma.conf.js"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:brokenq/dnt-action-service.git"
+    "url": "git@github.com:brokenq/json-cycle-parser.git"
   },
   "keywords": [
     "angular",
-    "dnt",
-    "action",
-    "service"
+    "json",
+    "cycle",
+    "parse",
+    "jackson"
   ],
   "author": "BrokenQ",
   "license": "MIT",

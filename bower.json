@@ -1,6 +1,6 @@
 {
-  "name": "dnt-action-service",
-  "version": "0.0.2",
+  "name": "json-cycle-parser",
+  "version": "1.0.0",
   "ignore": [
     "**/.*",
     "node_modules",
