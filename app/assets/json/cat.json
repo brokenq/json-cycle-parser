@@ -1,0 +1,31 @@
+{
+  "@id":  "aaf621e7-ea4a-378d-ad0a-6c01247752d8",
+  "name": "wendy",
+  "type": "cat",
+  "grandFather": null,
+  "children": [
+    {
+      "@id":  "f94556de-4bf8-8c75-b399-6ecfaec82eda",
+      "name": "hack",
+      "type": "cat",
+      "grandFather": null,
+      "children": [
+        {
+          "@id":  "edc1423f-f27a-e512-e2de-b4d7bccb1968",
+          "name": "painter",
+          "type": "cat",
+          "grandFather": "aaf621e7-ea4a-378d-ad0a-6c01247752d8",
+          "children": []
+        }
+      ]
+    },
+    {
+      "@id":  "8ea1562b-efb6-2256-86e6-2ab4b6757005",
+      "name": "win",
+      "type": "cat",
+      "grandFather": "aaf621e7-ea4a-378d-ad0a-6c01247752d8",
+      "children": []
+    }
+  ]
+
+}
